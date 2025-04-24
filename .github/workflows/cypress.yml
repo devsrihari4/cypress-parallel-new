@@ -1,0 +1,58 @@
+name: Run Cypress Tests in Parallel
+
+on:
+    workflow_dispatch:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        container: [1, 2] # Adjust based on desired parallelization
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests (sharded)
+        run: |
+          npx cypress run --spec "cypress/e2e/**/*.cy.js" --group "GH-Actions" --record false --parallel
+
+      - name: Archive Mochawesome Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-results
+          path: cypress/reports
+
+  merge-and-generate-report:
+    needs: cypress-run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download report artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: cypress-results
+
+      - name: Install report tools
+        run: npm install -g mochawesome-merge mochawesome-report-generator
+
+      - name: Merge JSONs and generate final report
+        run: |
+          mochawesome-merge cypress/reports/*.json > mochawesome.json
+          marge mochawesome.json -f report -o public
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public

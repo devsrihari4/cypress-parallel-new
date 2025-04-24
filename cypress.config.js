@@ -1,3 +1,5 @@
+const { defineConfig } = require('cypress');
+
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 // import allureWriter from "@shelex/cypress-allure-plugin/writer";
 

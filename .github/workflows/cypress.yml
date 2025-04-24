@@ -4,55 +4,59 @@ on:
     workflow_dispatch:
 
 jobs:
-  cypress-run:
+  cypress-tests:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        container: [1, 2] # Adjust based on desired parallelization
-
+        spec: 
+          - 'cypress/e2e/test.cy.js'
+          - 'cypress/e2e/test1.cy.js'
+          # Add more specs here manually or dynamically split
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Cypress tests (sharded)
+      - name: Run Cypress Tests
         run: |
-          npx cypress run --spec "cypress/e2e/**/*.cy.js" --group "GH-Actions" --record false --parallel
+          npx cypress run --spec ${{ matrix.spec }}
 
-      - name: Archive Mochawesome Results
+      - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-results
-          path: cypress/reports
+          name: allure-results-${{ matrix.spec }}
+          path: allure-results
 
-  merge-and-generate-report:
-    needs: cypress-run
+  generate-allure-report:
+    needs: cypress-tests
     runs-on: ubuntu-latest
     steps:
-      - name: Download report artifacts
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Allure Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: cypress-results
+          pattern: allure-results-*
+          merge-multiple: true
+          path: allure-results
 
-      - name: Install report tools
-        run: npm install -g mochawesome-merge mochawesome-report-generator
-
-      - name: Merge JSONs and generate final report
+      - name: Install Allure CLI
         run: |
-          mochawesome-merge cypress/reports/*.json > mochawesome.json
-          marge mochawesome.json -f report -o public
+          npm install -g allure-commandline --save-dev
 
-      - name: Deploy to GitHub Pages
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: ./allure-report

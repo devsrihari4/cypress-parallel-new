@@ -15,8 +15,7 @@ jobs:
       - name: Install Packages
         run: npm install
       - name: Run Tests
-        run: npx cypress run --env allure=true --spec $(node cypress-parallel.js ${{ matrix.containers }} 2)
-      
+        run: npx cypress run --env allure=true --spec $(node cypress-parallel.js ${{ matrix.containers }} 2) || npx allure generate allure-results -o allure-report
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4
         if: always()
@@ -34,6 +33,8 @@ jobs:
         with:
           name: ReportsData
           path: allure-results 
+      - name: Merge reports
+        run: npx allure generate allure-results -o allure-report
       - name: Get Allure history
         uses: actions/checkout@v2
         if: always()

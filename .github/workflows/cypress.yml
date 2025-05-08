@@ -20,7 +20,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ReportsData
+          name: ReportsData-${{ strategy.job-index }}
           path: allure-results
   job2:
     name: reports
@@ -31,7 +31,7 @@ jobs:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ReportsData
+          name: ReportsData-*
           path: allure-results 
       - name: Merge reports
         run: npx allure generate allure-results -o allure-report

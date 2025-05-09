@@ -32,7 +32,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: ReportsData-${{ matrix.containers }}
-          path: allure-results 
+          path: allure-results
+          merge-multiple: true
       - name: Get Allure history
         uses: actions/checkout@v2
         if: always()

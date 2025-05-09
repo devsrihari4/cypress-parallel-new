@@ -24,7 +24,7 @@ jobs:
           name: ReportsData-${{ matrix.containers }}
           path: allure-results
   merge: 
-    name: reports
+    name: merge
     if: always()
     runs-on: ubuntu-latest
     needs: job1
@@ -32,8 +32,8 @@ jobs:
       - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
-          name: ReportsData-${{ matrix.containers }}
-
+          pattern: ReportsData-${{ matrix.containers }}
+          path: allure-results
       - name: Merge Allure results
         run: |
           mkdir merged-allure-results

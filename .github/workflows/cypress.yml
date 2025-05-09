@@ -6,9 +6,9 @@ jobs:
     name: cypress-run
     runs-on: ubuntu-latest
     strategy:
-            fail-fast: false
-            matrix:
-             containers: [ 0, 1 ]
+      fail-fast: false
+      matrix:
+        containers: [0, 1]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ReportsData-${{ matrix.containers }}
+          name: ReportsData
           path: allure-results
   job2:
     name: reports
@@ -31,17 +31,17 @@ jobs:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v4
         with:
-          pattern: ReportsData-${{ matrix.containers }}
+          name: ReportsData
           path: allure-results
-          merge-multiple: true
+      - name: List Allure Results
+        run: ls -la allure-results
       - name: Get Allure history
         uses: actions/checkout@v2
         if: always()
         continue-on-error: true
         with:
-            ref: gh-pages
-            path: gh-pages
-         
+          ref: gh-pages
+          path: gh-pages
       - name: Allure Report action from marketplace
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -49,8 +49,9 @@ jobs:
           allure_results: allure-results
           allure_history: allure-history
           keep_reports: 20
-  
-      - name: Deploy report to Github Pages
+      - name: List Allure History
+        run: ls -la allure-history
+      - name: Deploy report to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v2
         env:

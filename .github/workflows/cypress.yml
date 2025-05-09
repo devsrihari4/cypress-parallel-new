@@ -37,7 +37,7 @@ jobs:
       - name: Merge Allure results
         run: |
           mkdir merged-allure-results
-          cp -r allure-results/* merged-allure-results/
+          cp -r allure-results/ merged-allure-results/
 
       - name: Generate Allure report
         run: |

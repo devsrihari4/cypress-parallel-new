@@ -24,6 +24,8 @@ jobs:
           name: ReportsData-${{ matrix.containers }}
           path: allure-results
   merge: 
+    name: reports
+    if: always()
     runs-on: ubuntu-latest
     needs: job1
     steps:

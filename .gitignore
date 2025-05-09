@@ -3,3 +3,4 @@ allure-results/
 .DS_Store
 allure-report/
 cypress/videos/
+cypress/screenshots/

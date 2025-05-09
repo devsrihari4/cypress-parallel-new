@@ -1,2 +1,5 @@
 node_modules
 allure-results/
+.DS_Store
+allure-report/
+cypress/videos/

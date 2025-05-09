@@ -21,7 +21,7 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-          name: ReportsData-${{ matrix.containers }}
+          name: allure-results-${{ matrix.containers }}
           path: allure-results
   merge: 
     name: merge
@@ -32,7 +32,7 @@ jobs:
       - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
-          pattern: ReportsData-${{ matrix.containers }}
+          pattern: allure-results-${{ matrix.containers }}
           path: allure-results
       - name: Merge Allure results
         run: |

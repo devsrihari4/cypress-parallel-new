@@ -19,6 +19,7 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
         with:
           name: ReportsData-${{ matrix.containers }}
           path: allure-results

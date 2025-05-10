@@ -1,2 +1,2 @@
 "Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"failed","Sat May 10 14:04:37 UTC 2025","Sat May 10 14:04:37 UTC 2025","203","","template spec","","","","passes",""
+"passed","Sat May 10 14:20:55 UTC 2025","Sat May 10 14:20:55 UTC 2025","374","","template spec","","","","passes",""

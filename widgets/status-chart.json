@@ -1,1 +1,1 @@
-[{"uid":"3a10a3a4edbef399","name":"passes","time":{"start":1746891500828,"stop":1746891501110,"duration":282},"status":"passed","severity":"normal"}]
+[{"uid":"9bd269bb4b0ea8c1","name":"test 2 passes","time":{"start":1746891924414,"stop":1746891924710,"duration":296},"status":"passed","severity":"normal"},{"uid":"c5282b983ab322e3","name":"Test 1 failing","time":{"start":1746891916353,"stop":1746891916540,"duration":187},"status":"failed","severity":"normal"}]

@@ -56,7 +56,11 @@ jobs:
       - name: Install Allure CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y allure
+          sudo apt-get install -y default-jre
+          curl -o allure-2.27.0.tgz -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -zxvf allure-2.27.0.tgz
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
       
       - name: Generate Allure Report
         run: |
@@ -65,11 +69,7 @@ jobs:
       - name: Debug allure-history folder
         run: ls -R allure-history || echo "No allure-history generated"
       
-      - name: Ensure allure-history folder exists
-        run: mkdir -p allure-history
-      
       - name: Deploy report to GitHub Pages
-        if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

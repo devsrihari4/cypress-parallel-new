@@ -53,40 +53,39 @@ jobs:
       
       - name: Merge Allure Results from all machines
         run: |
-          mkdir -p merged-allure-results
-          for folder in allure-results/ReportsData-*; do
-            if [ -d "$folder" ]; then
-              echo "Copying from $folder"
-              cp -r "$folder"/* merged-allure-results/ || true
-            else
-              echo "Skipping missing folder $folder"
-            fi
-          done
-          echo "Final merged contents:"
-          ls -lh merged-allure-results
-      
+            mkdir -p merged-allure-results
+            for folder in allure-results/ReportsData-*; do
+              if [ -d "$folder" ]; then
+                echo "Merging from $folder"
+                rsync -a "$folder"/ merged-allure-results/
+              fi
+            done
+            echo "Final merged contents:"
+            ls -lh merged-allure-results
+        
       - name: Install Allure CLI
         run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre
-          curl -o allure-2.27.0.tgz -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
-          tar -zxvf allure-2.27.0.tgz
-          sudo mv allure-2.27.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
-      
+            sudo apt-get update
+            sudo apt-get install -y default-jre rsync
+            curl -o allure-2.27.0.tgz -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+            tar -zxvf allure-2.27.0.tgz
+            sudo mv allure-2.27.0 /opt/allure
+            sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+        
       - name: Generate Allure Report
         run: |
-          allure generate merged-allure-results --clean -o allure-history
-      
+            rm -rf allure-history
+            allure generate merged-allure-results --clean -o allure-history
+        
       - name: Debug generated report
         run: |
-          echo "Generated report contents:"
-          ls -lh allure-history
-      
+            echo "Generated report contents:"
+            ls -lh allure-history
+        
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
-      
+        

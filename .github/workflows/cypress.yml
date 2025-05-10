@@ -42,18 +42,28 @@ jobs:
         with:
           path: allure-results
       
-      - name: list downloaded files
-        run: ls -R allure-results || echo "No artifacts found"
+      - name: List downloaded artifacts
+        run: |
+          echo "Artifact folders:"
+          ls -lh allure-results
+          echo "ReportsData-0 contents:"
+          ls -lh allure-results/ReportsData-0 || echo "Missing ReportsData-0"
+          echo "ReportsData-1 contents:"
+          ls -lh allure-results/ReportsData-1 || echo "Missing ReportsData-1"
       
       - name: Merge Allure Results from all machines
         run: |
           mkdir -p merged-allure-results
-          for dir in allure-results/*; do
-            if [ -d "$dir" ]; then
-              echo "Merging from $dir"
-              cp -r "$dir"/* merged-allure-results/ || true
+          for folder in allure-results/ReportsData-*; do
+            if [ -d "$folder" ]; then
+              echo "Copying from $folder"
+              cp -r "$folder"/* merged-allure-results/ || true
+            else
+              echo "Skipping missing folder $folder"
             fi
           done
+          echo "Final merged contents:"
+          ls -lh merged-allure-results
       
       - name: Install Allure CLI
         run: |
@@ -68,11 +78,10 @@ jobs:
         run: |
           allure generate merged-allure-results --clean -o allure-history
       
-      - name: Debug allure-history contents
-        run: ls -R allure-history || echo "No generated history"
-      
-      - name: Ensure allure-history exists
-        run: mkdir -p allure-history
+      - name: Debug generated report
+        run: |
+          echo "Generated report contents:"
+          ls -lh allure-history
       
       - name: Deploy report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
